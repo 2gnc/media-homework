@@ -1,3 +1,3 @@
 'use strict';
-const foo = 'bar';
-console.log( foo );
+
+let x = 1;
