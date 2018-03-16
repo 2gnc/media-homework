@@ -3,37 +3,44 @@
 window.addEventListener('DOMContentLoaded', function (e) {
   var player = document.getElementById('player');
   var canvas = document.getElementById('canvas');
-  var context = canvas.getContext('2d'); //   const videoOk = (stream) => {
+  var context = canvas.getContext('2d');
+  var ui = document.querySelector('ui__robo-ui'); //   const videoOk = (stream) => {
   //     player.srcObject = stream;
   //   };
   //
 
+  var displayErrorMgs = function displayErrorMgs(msg) {
+    var message = document.createElement('p');
+    message.innerText = msg;
+    message.classList.add('msg');
+    document.querySelector('header').appendChild(message);
+  };
+
   var videoNO = function videoNO() {
-    var msg = document.createElement('p');
-    msg.innerText = 'Ваш браузер не поддерживает зрение Захватчика, установите Яндекс Браузер';
-    msg.classList.add('msg');
-    document.querySelector('header').appendChild(msg);
+    displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите Яндекс Браузер или Chrome');
+  };
+
+  var displayUI = function displayUI() {
+    getDevices();
   };
 
   var getDevices = function getDevices() {
     navigator.mediaDevices.enumerateDevices().then(function (devices) {
       var cameras = [];
-      var audio = [];
       devices.forEach(function (device, i) {
         if (device.kind === 'videoinput') {
           cameras.push(device);
         }
-
-        ;
-
-        if (device.kind === 'audioinput') {
-          audio.push(device);
-        }
-
-        ;
       });
-      console.log('video', cameras);
-      console.log('audio', audio);
+
+      if (cameras.length === 0) {
+        displayErrorMgs('Ваш захватчик не оснащен камерой');
+      } else {
+        var camsForUi = document.createElement('div');
+        camsForUi.classList.add('ui__devices');
+      }
+
+      console.log(cameras.length);
     }).catch(function () {
       console.log('не удалось получить список устройств');
     });
@@ -59,8 +66,8 @@ window.addEventListener('DOMContentLoaded', function (e) {
   }
 
   if (navigator.mediaDevices || navigator.mediaDevices.enumerateDevices) {
-    // апустить видео
+    // запустить видео
     // отрисовать интерфейс
-    getDevices();
+    displayUI();
   }
 });

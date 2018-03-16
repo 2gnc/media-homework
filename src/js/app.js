@@ -2,33 +2,50 @@ window.addEventListener('DOMContentLoaded', (e) => {
   const player = document.getElementById('player');
   const canvas = document.getElementById('canvas');
   const context = canvas.getContext('2d');
+  const ui = document.querySelector('ui__robo-ui');
 
   //   const videoOk = (stream) => {
   //     player.srcObject = stream;
   //   };
   //
+  const displayErrorMgs = (msg) => {
+    const message = document.createElement('p');
+    message.innerText = msg;
+    message.classList.add('msg');
+    document.querySelector('header').appendChild(message);
+  }
+
   const videoNO = () => {
-    const msg = document.createElement('p');
-    msg.innerText = 'Ваш браузер не поддерживает зрение Захватчика, установите Яндекс Браузер';
-    msg.classList.add('msg');
-    document.querySelector('header').appendChild(msg);
+    displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите Яндекс Браузер или Chrome');
   };
+
+  const displayUI = () => {
+    getDevices();
+
+  }
 
   const getDevices = () => {
     navigator.mediaDevices.enumerateDevices()
       .then( (devices) => {
+
         let cameras = [];
-        let audio = [];
+
         devices.forEach( (device, i) => {
+
           if (device.kind === 'videoinput') {
             cameras.push( device );
-          };
-          if (device.kind === 'audioinput') {
-            audio.push( device );
-          };
+          }
+
         });
-        console.log( 'video', cameras );
-        console.log( 'audio', audio );
+
+        if(cameras.length === 0) {
+          displayErrorMgs('Ваш захватчик не оснащен камерой');
+        } else {
+          let camsForUi = document.createElement('div');
+          camsForUi.classList.add('ui__devices');
+        }
+        console.log( cameras.length );
+
       })
       .catch( () => {
         console.log( 'не удалось получить список устройств' );
@@ -54,9 +71,9 @@ window.addEventListener('DOMContentLoaded', (e) => {
   }
 
   if (navigator.mediaDevices || navigator.mediaDevices.enumerateDevices) {
-    // апустить видео
+    // запустить видео
     // отрисовать интерфейс
-    getDevices();
+    displayUI();
   }
 });
 
