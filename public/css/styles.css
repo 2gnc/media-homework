@@ -29,5 +29,6 @@
     height: calc(0.6 * 90vw);
     outline: 1px solid lime; }
   .ui__video {
-    width: 0;
-    height: 0; }
+    width: 90vw;
+    height: calc(0.6 * 90vw);
+    display: none; }
