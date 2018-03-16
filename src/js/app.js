@@ -34,7 +34,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
   }
 
   const videoNO = () => {
-    displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите Яндекс Браузер или Chrome');
+    displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome');
   };
 
   const displayUI = () => {
@@ -42,6 +42,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
   }
 
   const getDevices = () => {
+
     navigator.mediaDevices.enumerateDevices()
       .then( (devices) => {
         let cameras = [];
@@ -66,33 +67,28 @@ window.addEventListener('DOMContentLoaded', (e) => {
     player.srcObject = stream;
   };
 
-
-  const getVideo = (video, cont, width, height) => {
-    cont.drawImage( video, 0, 0, width, height );
-    setTimeout(getVideo, 20, video, cont, width, height)
+  const getVideo = () => {
+    context.drawImage( player, 0, 0, canvasWidth/3.4, canvasHeight/3.4 );
+    requestAnimationFrame(getVideo);
   };
 
   navigator.mediaDevices.getUserMedia({
       audio: false,
-      video: true
+      video: true,
     })
     .then(videoOk)
     .catch(videoNO);
 
-  navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-  if (!navigator.getUserMedia) {
-    videoNO();
-  }
-
   if (navigator.mediaDevices || navigator.mediaDevices.enumerateDevices) {
-    player.addEventListener('play', (e) => {
-      getVideo(e.target, context, canvasWidth/3.6, canvasHeight/3.6);
-
+    player.addEventListener('play', () => {
+      getVideo();
     }, false)
     // запустить видео
     // отрисовать интерфейс
     displayUI();
 
+
   }
+
 });
 

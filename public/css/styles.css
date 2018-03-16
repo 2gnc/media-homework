@@ -27,7 +27,7 @@
   .ui__canvas {
     width: 90vw;
     height: calc(0.6 * 90vw);
-    outline: 1px solid lime; }
+    outline: 1px solid red; }
   .ui__video {
     width: 90vw;
     height: calc(0.6 * 90vw);
