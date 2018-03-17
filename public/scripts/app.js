@@ -47,6 +47,18 @@ window.addEventListener('DOMContentLoaded', function (e) {
 
   var getVideo = function getVideo() {
     context.drawImage(player, 0, 0, 300, 200);
+    var image = context.getImageData(0, 0, 300, 200);
+    var data = image.data;
+
+    for (var i = 0; i < data.length; i += 4) {
+      var r = data[i];
+      var g = data[i + 1];
+      var b = data[i + 2];
+      var brightness = (r + g + b) / 3;
+      data[i] = data[i + 1] = data[i + 2] = brightness;
+    }
+
+    context.putImageData(image, 0, 0);
     requestAnimationFrame(getVideo);
   };
 

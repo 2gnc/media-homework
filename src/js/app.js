@@ -50,6 +50,20 @@ window.addEventListener('DOMContentLoaded', (e) => {
   const getVideo = () => {
     context.drawImage( player, 0, 0, 300, 200 );
 
+    const image = context.getImageData(0, 0, 300, 200);
+    const data = image.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+      let r = data[i];
+      let g = data[i + 1];
+      let b = data[i + 2];
+      let brightness = (r + g + b) / 3;
+
+      data[i] = data[i + 1] = data[i + 2] = brightness;
+    }
+
+    context.putImageData(image, 0, 0)
+
     requestAnimationFrame(getVideo);
   };
 
