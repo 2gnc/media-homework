@@ -5,25 +5,6 @@ window.addEventListener('DOMContentLoaded', function (e) {
   var canvas = document.getElementById('canvas');
   var context = canvas.getContext('2d');
   var ui = document.querySelector('ui__robo-ui');
-  var canvasWidth = canvas.clientWidth;
-  var canvasHeight = canvas.clientHeight;
-  var resizeTimeout;
-
-  var getCanvasDimentions = function getCanvasDimentions() {
-    canvasWidth = canvas.clientWidth;
-    canvasHeight = canvas.clientHeight;
-  };
-
-  var resizeThrottler = function resizeThrottler() {
-    if (!resizeTimeout) {
-      resizeTimeout = setTimeout(function () {
-        resizeTimeout = null;
-        getCanvasDimentions();
-      }, 300);
-    }
-  };
-
-  window.addEventListener('resize', resizeThrottler, false);
 
   var displayErrorMgs = function displayErrorMgs(msg) {
     var message = document.createElement('p');
@@ -33,7 +14,7 @@ window.addEventListener('DOMContentLoaded', function (e) {
   };
 
   var videoNO = function videoNO() {
-    displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome');
+    displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome'); //TODO стримить какое-нибудь видео с ютюба
   };
 
   var displayUI = function displayUI() {
@@ -65,7 +46,7 @@ window.addEventListener('DOMContentLoaded', function (e) {
   };
 
   var getVideo = function getVideo() {
-    context.drawImage(player, 0, 0, canvasWidth / 3.4, canvasHeight / 3.4);
+    context.drawImage(player, 0, 0, 300, 200);
     requestAnimationFrame(getVideo);
   };
 

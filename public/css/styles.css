@@ -26,8 +26,9 @@
     background-color: transparent; }
   .ui__canvas {
     width: 90vw;
+    max-width: 1000px;
     height: calc(0.6 * 90vw);
-    outline: 1px solid red; }
+    max-height: 600px; }
   .ui__video {
     width: 90vw;
     height: calc(0.6 * 90vw);

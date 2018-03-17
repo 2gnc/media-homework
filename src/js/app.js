@@ -5,27 +5,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
   const context = canvas.getContext('2d');
   const ui = document.querySelector('ui__robo-ui');
 
-  let canvasWidth = canvas.clientWidth;
-  let canvasHeight = canvas.clientHeight;
-
-  let resizeTimeout;
-
-  const getCanvasDimentions = () => {
-    canvasWidth = canvas.clientWidth;
-    canvasHeight = canvas.clientHeight;
-  };
-
-  const resizeThrottler = () => {
-    if ( !resizeTimeout ) {
-      resizeTimeout = setTimeout(function() {
-        resizeTimeout = null;
-        getCanvasDimentions();
-      }, 300);
-    }
-  };
-
-  window.addEventListener( 'resize', resizeThrottler, false );
-
   const displayErrorMgs = (msg) => {
     const message = document.createElement('p');
     message.innerText = msg;
@@ -35,6 +14,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 
   const videoNO = () => {
     displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome');
+    //TODO стримить какое-нибудь видео с ютюба
   };
 
   const displayUI = () => {
@@ -68,7 +48,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
   };
 
   const getVideo = () => {
-    context.drawImage( player, 0, 0, canvasWidth/3.4, canvasHeight/3.4 );
+    context.drawImage( player, 0, 0, 300, 200 );
+
     requestAnimationFrame(getVideo);
   };
 
@@ -86,8 +67,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
     // запустить видео
     // отрисовать интерфейс
     displayUI();
-
-
   }
 
 });
