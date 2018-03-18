@@ -6,6 +6,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const canvas = document.getElementById('canvas');
   const context = canvas.getContext('2d');
+
+  const noized = document.getElementById('ui__noized');
+  let noize;
+
   const ui = document.querySelector('ui__robo-ui');
 
   const displayErrorMgs = (msg) => {
@@ -15,14 +19,20 @@ window.addEventListener('DOMContentLoaded', () => {
     document.querySelector('header').appendChild(message);
   };
 
+  const randInt = (min, max) => {
+    let rand = min - 0.5 + Math.random() * (max - min + 1);
+    rand = Math.round(rand);
+    return rand;
+  }
+
   const videoNO = () => {
     displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome');
     // TODO стримить какое-нибудь видео с ютюба
   };
 
-  const displayUI = () => {
-    getDevices();
-  }
+  const displayUI = (x) => {
+    console.log(x);
+  };
 
   const getDevices = () => {
 
@@ -32,7 +42,8 @@ window.addEventListener('DOMContentLoaded', () => {
         devices.forEach( (device, i) => {
           if (device.kind === 'videoinput') {
             cameras.push( device );
-          }
+            displayUI(cameras);
+          };
         });
         if (cameras.length === 0) {
           displayErrorMgs('Ваш захватчик не оснащен камерой');
@@ -43,7 +54,8 @@ window.addEventListener('DOMContentLoaded', () => {
       })
       .catch( () => {
         console.log( 'не удалось получить список устройств' );
-    } );
+    });
+
   };
 
   const videoOk = (stream) => {
@@ -68,9 +80,24 @@ window.addEventListener('DOMContentLoaded', () => {
       data[i] = 180;
     }
 
-    context.putImageData(image, 0, 0)
+    context.putImageData(image, 0, 0);
 
     requestAnimationFrame(getVideo);
+  };
+
+  const makeNoize = () => {
+    const filters = [
+      'grayscale(100%)',
+      'sepia(100%)',
+      'hue-rotate(270deg)',
+      'invert(100%)',
+      'url(#posterize)'
+    ];
+    noize = canvas.toDataURL();
+    noized.style.backgroundImage = 'url(' + noize + ')';
+    noized.style.filter = filters[randInt(0, 5)];
+    setTimeout(()=>{ noized.style.backgroundImage = '' }, 400);
+    setTimeout(makeNoize, randInt(5000, 15000) );
   };
 
   navigator.mediaDevices.getUserMedia({
@@ -83,10 +110,10 @@ window.addEventListener('DOMContentLoaded', () => {
   if (navigator.mediaDevices || navigator.mediaDevices.enumerateDevices) {
     player.addEventListener('play', () => {
       getVideo();
+      makeNoize();
     }, false);
-    // запустить видео
     // отрисовать интерфейс
-    displayUI();
+    getDevices();
   }
 });
 

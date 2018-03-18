@@ -6,6 +6,8 @@ window.addEventListener('DOMContentLoaded', function () {
   player.muted = true;
   var canvas = document.getElementById('canvas');
   var context = canvas.getContext('2d');
+  var noized = document.getElementById('ui__noized');
+  var noize;
   var ui = document.querySelector('ui__robo-ui');
 
   var displayErrorMgs = function displayErrorMgs(msg) {
@@ -15,12 +17,18 @@ window.addEventListener('DOMContentLoaded', function () {
     document.querySelector('header').appendChild(message);
   };
 
+  var randInt = function randInt(min, max) {
+    var rand = min - 0.5 + Math.random() * (max - min + 1);
+    rand = Math.round(rand);
+    return rand;
+  };
+
   var videoNO = function videoNO() {
     displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome'); // TODO стримить какое-нибудь видео с ютюба
   };
 
-  var displayUI = function displayUI() {
-    getDevices();
+  var displayUI = function displayUI(x) {
+    console.log(x);
   };
 
   var getDevices = function getDevices() {
@@ -29,7 +37,10 @@ window.addEventListener('DOMContentLoaded', function () {
       devices.forEach(function (device, i) {
         if (device.kind === 'videoinput') {
           cameras.push(device);
+          displayUI(cameras);
         }
+
+        ;
       });
 
       if (cameras.length === 0) {
@@ -65,6 +76,17 @@ window.addEventListener('DOMContentLoaded', function () {
     requestAnimationFrame(getVideo);
   };
 
+  var makeNoize = function makeNoize() {
+    var filters = ['grayscale(100%)', 'sepia(100%)', 'hue-rotate(270deg)', 'invert(100%)', 'url(#posterize)'];
+    noize = canvas.toDataURL();
+    noized.style.backgroundImage = 'url(' + noize + ')';
+    noized.style.filter = filters[randInt(0, 5)];
+    setTimeout(function () {
+      noized.style.backgroundImage = '';
+    }, 400);
+    setTimeout(makeNoize, randInt(5000, 15000));
+  };
+
   navigator.mediaDevices.getUserMedia({
     audio: false,
     video: true
@@ -73,9 +95,9 @@ window.addEventListener('DOMContentLoaded', function () {
   if (navigator.mediaDevices || navigator.mediaDevices.enumerateDevices) {
     player.addEventListener('play', function () {
       getVideo();
-    }, false); // запустить видео
-    // отрисовать интерфейс
+      makeNoize();
+    }, false); // отрисовать интерфейс
 
-    displayUI();
+    getDevices();
   }
 });
