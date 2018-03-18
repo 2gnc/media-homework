@@ -1,7 +1,9 @@
 "use strict";
 
-window.addEventListener('DOMContentLoaded', function (e) {
-  var player = document.getElementById('player');
+window.addEventListener('DOMContentLoaded', function () {
+  var player = document.createElement('video');
+  player.autoplay = true;
+  player.muted = true;
   var canvas = document.getElementById('canvas');
   var context = canvas.getContext('2d');
   var ui = document.querySelector('ui__robo-ui');
@@ -14,7 +16,7 @@ window.addEventListener('DOMContentLoaded', function (e) {
   };
 
   var videoNO = function videoNO() {
-    displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome'); //TODO стримить какое-нибудь видео с ютюба
+    displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome'); // TODO стримить какое-нибудь видео с ютюба
   };
 
   var displayUI = function displayUI() {
@@ -54,8 +56,9 @@ window.addEventListener('DOMContentLoaded', function (e) {
       var r = data[i];
       var g = data[i + 1];
       var b = data[i + 2];
-      var brightness = (r + g + b) / 3;
-      data[i] = data[i + 1] = data[i + 2] = brightness;
+      var v = 0.2126 * r + 0.9152 * g + 0.1722 * b;
+      data[i] = data[i + 1] = data[i + 2] = v;
+      data[i] = 180;
     }
 
     context.putImageData(image, 0, 0);

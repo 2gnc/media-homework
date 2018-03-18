@@ -1,6 +1,9 @@
-window.addEventListener('DOMContentLoaded', (e) => {
+window.addEventListener('DOMContentLoaded', () => {
 
-  const player = document.getElementById('player');
+  const player = document.createElement('video');
+  player.autoplay = true;
+  player.muted = true;
+
   const canvas = document.getElementById('canvas');
   const context = canvas.getContext('2d');
   const ui = document.querySelector('ui__robo-ui');
@@ -10,11 +13,11 @@ window.addEventListener('DOMContentLoaded', (e) => {
     message.innerText = msg;
     message.classList.add('msg');
     document.querySelector('header').appendChild(message);
-  }
+  };
 
   const videoNO = () => {
     displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome');
-    //TODO стримить какое-нибудь видео с ютюба
+    // TODO стримить какое-нибудь видео с ютюба
   };
 
   const displayUI = () => {
@@ -31,7 +34,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             cameras.push( device );
           }
         });
-        if(cameras.length === 0) {
+        if (cameras.length === 0) {
           displayErrorMgs('Ваш захватчик не оснащен камерой');
         } else {
           let camsForUi = document.createElement('div');
@@ -48,18 +51,21 @@ window.addEventListener('DOMContentLoaded', (e) => {
   };
 
   const getVideo = () => {
+
     context.drawImage( player, 0, 0, 300, 200 );
 
     const image = context.getImageData(0, 0, 300, 200);
     const data = image.data;
 
     for (let i = 0; i < data.length; i += 4) {
-      let r = data[i];
-      let g = data[i + 1];
-      let b = data[i + 2];
-      let brightness = (r + g + b) / 3;
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
 
-      data[i] = data[i + 1] = data[i + 2] = brightness;
+      const v = (0.2126 * r) + (0.9152 * g) + (0.1722 * b);
+      data[i] = data[i + 1] = data[i + 2] = v;
+
+      data[i] = 180;
     }
 
     context.putImageData(image, 0, 0)
@@ -68,20 +74,19 @@ window.addEventListener('DOMContentLoaded', (e) => {
   };
 
   navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: true,
-    })
-    .then(videoOk)
-    .catch(videoNO);
+    audio: false,
+    video: true,
+  })
+  .then(videoOk)
+  .catch(videoNO);
 
   if (navigator.mediaDevices || navigator.mediaDevices.enumerateDevices) {
     player.addEventListener('play', () => {
       getVideo();
-    }, false)
+    }, false);
     // запустить видео
     // отрисовать интерфейс
     displayUI();
   }
-
 });
 

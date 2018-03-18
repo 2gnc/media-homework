@@ -28,8 +28,6 @@
     width: 90vw;
     max-width: 1000px;
     height: calc(0.6 * 90vw);
-    max-height: 600px; }
-  .ui__video {
-    width: 90vw;
-    height: calc(0.6 * 90vw);
-    display: none; }
+    max-height: 600px;
+    -webkit-filter: contrast(1.5) hue-rotate(40deg) saturate(1.5) brightness(0.6);
+    filter: contrast(1.5) hue-rotate(40deg) saturate(1.5) brightness(0.6); }
