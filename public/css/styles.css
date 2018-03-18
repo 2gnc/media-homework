@@ -34,7 +34,7 @@
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: center center;
-    background-size: contain; }
+    background-size: cover; }
 
 .robo-ui {
   position: absolute;
@@ -43,7 +43,8 @@
   z-index: 3;
   background-color: transparent;
   padding: 3vw;
-  font-family: "Roboto", sans-serif; }
+  font-family: "Roboto", sans-serif;
+  color: white; }
   .robo-ui::after {
     content: '';
     position: absolute;
@@ -55,8 +56,7 @@
     height: calc(100% - 6vw);
     outline: 3px solid rgba(255, 255, 255, 0.5);
     outline-offset: -2vw; }
-  .robo-ui__cam {
-    color: white; }
   .robo-ui__camname {
     display: inline-block;
-    margin-left: 0.5em; }
+    margin-left: 0.5em;
+    margin-right: 1em; }

@@ -11,6 +11,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let noize;
 
   const camlist = document.getElementById('camlist');
+  const soundBox = document.getElementById('sound');
 
   const displayErrorMgs = (msg) => {
     const message = document.createElement('p');
@@ -32,7 +33,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const displayUI = (x) => {
     let frag = document.createDocumentFragment();
-    console.log(x);
     x.forEach( (cam) => {
       let ico = document.createElement('i');
       ico.className = 'fas fa-circle-notch fa-spin';
@@ -64,7 +64,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
       })
       .catch( () => {
-        console.log( 'не удалось получить список устройств' );
+        displayErrorMgs( 'не удалось получить список устройств' );
     });
 
   };
@@ -126,6 +126,6 @@ window.addEventListener('DOMContentLoaded', () => {
       makeNoize();
     }, false);
     getDevices();
-  }
+  };
 });
 
