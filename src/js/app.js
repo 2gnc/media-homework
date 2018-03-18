@@ -27,8 +27,7 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   const videoNO = () => {
-    displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome');
-    // TODO стримить какое-нибудь видео с ютюба
+    displayErrorMgs('Ваш браузер не поддерживает видео из встроенной камеры, установите последнюю версию Firefox или Chrome');
   };
 
   const displayUI = (x) => {
@@ -71,6 +70,39 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const videoOk = (stream) => {
     player.srcObject = stream;
+    return stream;
+  };
+
+  const audioOk = (stream) => {
+
+    let audio = stream.getAudioTracks();
+
+    if(audio.length > 0) {
+      let AudioContext = window.AudioContext || window.webkitAudioContext;
+      let audioCtx = new AudioContext();
+      //источник звука
+      let audioSource = audioCtx.createMediaStreamSource(stream);
+      //узел для анализа аудио
+      let analyser = audioCtx.createAnalyser();
+      // процессор
+      let processor = audioCtx.createScriptProcessor(2048, 1, 1);
+      // источник звука
+      let source = audioCtx.createMediaStreamSource(stream);
+
+      source.connect(analyser);
+      source.connect(processor);
+      analyser.connect(audioCtx.destination);
+      processor.connect(audioCtx.destination);
+
+      analyser.fftSize = 128;
+
+      let data = new Uint8Array(analyser.frequencyBinCount);
+      processor.onaudioprocess = () => {
+        analyser.getByteFrequencyData(data);
+        //console.log(data);
+      };
+    };
+
   };
 
   const getVideo = () => {
@@ -114,10 +146,11 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   navigator.mediaDevices.getUserMedia({
-    audio: false,
+    audio: true,
     video: true,
   })
   .then(videoOk)
+  .then(audioOk)
   .catch(videoNO);
 
   if (navigator.mediaDevices || navigator.mediaDevices.enumerateDevices) {
