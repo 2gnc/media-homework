@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', function () {
   var context = canvas.getContext('2d');
   var noized = document.getElementById('ui__noized');
   var noize;
-  var ui = document.querySelector('ui__robo-ui');
+  var camlist = document.getElementById('camlist');
 
   var displayErrorMgs = function displayErrorMgs(msg) {
     var message = document.createElement('p');
@@ -28,7 +28,18 @@ window.addEventListener('DOMContentLoaded', function () {
   };
 
   var displayUI = function displayUI(x) {
+    var frag = document.createDocumentFragment();
     console.log(x);
+    x.forEach(function (cam) {
+      var ico = document.createElement('i');
+      ico.className = 'fas fa-circle-notch fa-spin';
+      frag.appendChild(ico);
+      var el = document.createElement('p');
+      el.classList.add('robo-ui__camname');
+      el.innerText = cam.label.replace(/\n/m, '') + '; ';
+      frag.appendChild(el);
+    });
+    camlist.appendChild(frag);
   };
 
   var getDevices = function getDevices() {
@@ -96,8 +107,7 @@ window.addEventListener('DOMContentLoaded', function () {
     player.addEventListener('play', function () {
       getVideo();
       makeNoize();
-    }, false); // отрисовать интерфейс
-
+    }, false);
     getDevices();
   }
 });

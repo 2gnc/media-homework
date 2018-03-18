@@ -4,5 +4,21 @@
   height: 100%
   z-index: 3
   background-color: transparent
-  outline: 3px solid rgba(255, 255, 255, 0.5)
-  outline-offset: -2vw
+  padding: 3vw
+  font-family: $uiFont
+  &::after
+    content: ''
+    position: absolute
+    top: 0
+    left: 0
+    z-index: 1
+    display: block
+    width: calc(100% - 6vw)
+    height: calc(100% - 6vw)
+    outline: 3px solid rgba(255, 255, 255, 0.5)
+    outline-offset: -2vw
+  &__cam
+    color: $uicolor
+  &__camname
+    display: inline-block
+    margin-left: 0.5em

@@ -10,7 +10,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const noized = document.getElementById('ui__noized');
   let noize;
 
-  const ui = document.querySelector('ui__robo-ui');
+  const camlist = document.getElementById('camlist');
 
   const displayErrorMgs = (msg) => {
     const message = document.createElement('p');
@@ -23,7 +23,7 @@ window.addEventListener('DOMContentLoaded', () => {
     let rand = min - 0.5 + Math.random() * (max - min + 1);
     rand = Math.round(rand);
     return rand;
-  }
+  };
 
   const videoNO = () => {
     displayErrorMgs('Ваш браузер не поддерживает зрение Захватчика, установите последнюю версию Firefox или Chrome');
@@ -31,7 +31,18 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   const displayUI = (x) => {
+    let frag = document.createDocumentFragment();
     console.log(x);
+    x.forEach( (cam) => {
+      let ico = document.createElement('i');
+      ico.className = 'fas fa-circle-notch fa-spin';
+      frag.appendChild(ico);
+      let el = document.createElement('p');
+      el.classList.add('robo-ui__camname');
+      el.innerText = cam.label.replace(/\n/m, '') + '; ';
+      frag.appendChild(el);
+    });
+    camlist.appendChild(frag);
   };
 
   const getDevices = () => {
@@ -91,12 +102,14 @@ window.addEventListener('DOMContentLoaded', () => {
       'sepia(100%)',
       'hue-rotate(270deg)',
       'invert(100%)',
-      'url(#posterize)'
+      'url(#posterize)',
     ];
     noize = canvas.toDataURL();
     noized.style.backgroundImage = 'url(' + noize + ')';
     noized.style.filter = filters[randInt(0, 5)];
-    setTimeout(()=>{ noized.style.backgroundImage = '' }, 400);
+    setTimeout(() => {
+      noized.style.backgroundImage = '';
+      }, 400);
     setTimeout(makeNoize, randInt(5000, 15000) );
   };
 
@@ -112,7 +125,6 @@ window.addEventListener('DOMContentLoaded', () => {
       getVideo();
       makeNoize();
     }, false);
-    // отрисовать интерфейс
     getDevices();
   }
 });
