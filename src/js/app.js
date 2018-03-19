@@ -11,7 +11,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let noize;
 
   const camlist = document.getElementById('camlist');
-  const soundBox = document.getElementById('sound');
+  const soundBox = document.getElementById('soundbar');
 
   const displayErrorMgs = (msg) => {
     const message = document.createElement('p');
@@ -31,12 +31,12 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   const displayUI = (x) => {
-    let frag = document.createDocumentFragment();
-    x.forEach( (cam) => {
-      let ico = document.createElement('i');
+    const frag = document.createDocumentFragment();
+    x.forEach((cam) => {
+      const ico = document.createElement('i');
       ico.className = 'fas fa-circle-notch fa-spin';
       frag.appendChild(ico);
-      let el = document.createElement('p');
+      const el = document.createElement('p');
       el.classList.add('robo-ui__camname');
       el.innerText = cam.label.replace(/\n/m, '') + '; ';
       frag.appendChild(el);
@@ -47,26 +47,25 @@ window.addEventListener('DOMContentLoaded', () => {
   const getDevices = () => {
 
     navigator.mediaDevices.enumerateDevices()
-      .then( (devices) => {
-        let cameras = [];
-        devices.forEach( (device, i) => {
+      .then((devices) => {
+        const cameras = [];
+        devices.forEach((device) => {
           if (device.kind === 'videoinput') {
-            cameras.push( device );
+            cameras.push(device);
             displayUI(cameras);
-          };
+          }
         });
         if (cameras.length === 0) {
           displayErrorMgs('Ваш захватчик не оснащен камерой');
         } else {
-          let camsForUi = document.createElement('div');
+          const camsForUi = document.createElement('div');
           camsForUi.classList.add('ui__devices');
         }
       })
-      .catch( () => {
-        displayErrorMgs( 'не удалось получить список устройств' );
-    });
-
-  };
+      .catch(() => {
+        displayErrorMgs('не удалось получить список устройств');
+      });
+    };
 
   const videoOk = (stream) => {
     player.srcObject = stream;
@@ -77,30 +76,67 @@ window.addEventListener('DOMContentLoaded', () => {
 
     let audio = stream.getAudioTracks();
 
-    if(audio.length > 0) {
-      let AudioContext = window.AudioContext || window.webkitAudioContext;
-      let audioCtx = new AudioContext();
-      //источник звука
-      let audioSource = audioCtx.createMediaStreamSource(stream);
-      //узел для анализа аудио
-      let analyser = audioCtx.createAnalyser();
-      // процессор
-      let processor = audioCtx.createScriptProcessor(2048, 1, 1);
+    if (audio.length > 0) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audioCtx = new AudioContext();
       // источник звука
-      let source = audioCtx.createMediaStreamSource(stream);
+      // узел для анализа аудио
+      const analyser = audioCtx.createAnalyser();
+      // процессор
+      const processor = audioCtx.createScriptProcessor(2048, 1, 1);
+      // источник звука
+      const source = audioCtx.createMediaStreamSource(stream);
+
+      const wi = 600;
+      const hei = 100;
 
       source.connect(analyser);
       source.connect(processor);
-      analyser.connect(audioCtx.destination);
       processor.connect(audioCtx.destination);
 
-      analyser.fftSize = 128;
+      analyser.fftSize = 2048;
 
-      let data = new Uint8Array(analyser.frequencyBinCount);
-      processor.onaudioprocess = () => {
-        analyser.getByteFrequencyData(data);
-        //console.log(data);
+      const bufferLength = analyser.frequencyBinCount;
+
+      const dataArray = new Uint8Array(bufferLength);
+
+      const canvasCtx = soundBox.getContext('2d');
+
+      canvasCtx.clearRect(0, 0, wi, hei);
+
+      const drawSound = () => {
+        analyser.getByteTimeDomainData(dataArray);
+        canvasCtx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+        canvasCtx.fillRect(0, 0, wi, hei);
+        canvasCtx.lineWidth = 2;
+        canvasCtx.strokeStyle = 'rgb(255, 255, 255)';
+        canvasCtx.beginPath();
+        let sliceWidth = wi * 1.0 / bufferLength;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i ++) {
+
+          let v = dataArray[i] / 128.0;
+          let y = v * hei/2;
+
+          if (i === 0) {
+            canvasCtx.moveTo(x, y);
+          } else {
+            canvasCtx.lineTo(x, y);
+          }
+
+          x += sliceWidth;
+        }
+
+        canvasCtx.lineTo(canvas.width, canvas.height/2);
+
+        canvasCtx.stroke();
+
+        requestAnimationFrame(drawSound);
       };
+
+      drawSound();
+
     };
 
   };
@@ -149,9 +185,9 @@ window.addEventListener('DOMContentLoaded', () => {
     audio: true,
     video: true,
   })
-  .then(videoOk)
-  .then(audioOk)
-  .catch(videoNO);
+    .then(videoOk)
+    .then(audioOk)
+    .catch(videoNO);
 
   if (navigator.mediaDevices || navigator.mediaDevices.enumerateDevices) {
     player.addEventListener('play', () => {
@@ -159,6 +195,6 @@ window.addEventListener('DOMContentLoaded', () => {
       makeNoize();
     }, false);
     getDevices();
-  };
+  }
 });
 

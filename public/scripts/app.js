@@ -9,7 +9,7 @@ window.addEventListener('DOMContentLoaded', function () {
   var noized = document.getElementById('ui__noized');
   var noize;
   var camlist = document.getElementById('camlist');
-  var soundBox = document.getElementById('sound');
+  var soundBox = document.getElementById('soundbar');
 
   var displayErrorMgs = function displayErrorMgs(msg) {
     var message = document.createElement('p');
@@ -45,13 +45,11 @@ window.addEventListener('DOMContentLoaded', function () {
   var getDevices = function getDevices() {
     navigator.mediaDevices.enumerateDevices().then(function (devices) {
       var cameras = [];
-      devices.forEach(function (device, i) {
+      devices.forEach(function (device) {
         if (device.kind === 'videoinput') {
           cameras.push(device);
           displayUI(cameras);
         }
-
-        ;
       });
 
       if (cameras.length === 0) {
@@ -75,25 +73,54 @@ window.addEventListener('DOMContentLoaded', function () {
 
     if (audio.length > 0) {
       var AudioContext = window.AudioContext || window.webkitAudioContext;
-      var audioCtx = new AudioContext(); //источник звука
-
-      var audioSource = audioCtx.createMediaStreamSource(stream); //узел для анализа аудио
+      var audioCtx = new AudioContext(); // источник звука
+      // узел для анализа аудио
 
       var analyser = audioCtx.createAnalyser(); // процессор
 
       var processor = audioCtx.createScriptProcessor(2048, 1, 1); // источник звука
 
       var source = audioCtx.createMediaStreamSource(stream);
+      var wi = 600;
+      var hei = 100;
       source.connect(analyser);
       source.connect(processor);
-      analyser.connect(audioCtx.destination);
       processor.connect(audioCtx.destination);
-      analyser.fftSize = 128;
-      var data = new Uint8Array(analyser.frequencyBinCount);
+      analyser.fftSize = 2048;
+      var bufferLength = analyser.frequencyBinCount;
+      var dataArray = new Uint8Array(bufferLength);
+      var canvasCtx = soundBox.getContext('2d');
+      canvasCtx.clearRect(0, 0, wi, hei);
 
-      processor.onaudioprocess = function () {
-        analyser.getByteFrequencyData(data); //console.log(data);
+      var drawSound = function drawSound() {
+        analyser.getByteTimeDomainData(dataArray);
+        canvasCtx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+        canvasCtx.fillRect(0, 0, wi, hei);
+        canvasCtx.lineWidth = 2;
+        canvasCtx.strokeStyle = 'rgb(255, 255, 255)';
+        canvasCtx.beginPath();
+        var sliceWidth = wi * 1.0 / bufferLength;
+        var x = 0;
+
+        for (var i = 0; i < bufferLength; i++) {
+          var v = dataArray[i] / 128.0;
+          var y = v * hei / 2;
+
+          if (i === 0) {
+            canvasCtx.moveTo(x, y);
+          } else {
+            canvasCtx.lineTo(x, y);
+          }
+
+          x += sliceWidth;
+        }
+
+        canvasCtx.lineTo(canvas.width, canvas.height / 2);
+        canvasCtx.stroke();
+        requestAnimationFrame(drawSound);
       };
+
+      drawSound();
     }
 
     ;
@@ -140,6 +167,4 @@ window.addEventListener('DOMContentLoaded', function () {
     }, false);
     getDevices();
   }
-
-  ;
 });
